@@ -1,19 +1,15 @@
 <template>
-
+  <div class="app-container">
+    <goods-detail :is-edit="true"></goods-detail>
+  </div>
 </template>
 <script>
-	export default {
-		name: 'goods',
-		data() {
-			return {
+import goodsDetail from './components/goodsDetail';
+export default {
+  name: 'goodsUpdate',
+  components: {
+  	goodsDetail
+  }
+}
 
-			}
-		},
-		created() {
-
-		},
-		methods: {
-
-		}
-	}
 </script>

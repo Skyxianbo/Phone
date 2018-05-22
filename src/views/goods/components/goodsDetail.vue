@@ -76,9 +76,7 @@ export default {
       flag: true,
       uploadUrl: '',
       fileList: [],
-      rules: {
-
-      }
+      rules: {}
     }
   },
   computed: {

@@ -42,12 +42,6 @@
             {{scope.row.supplierName}}
           </template>
         </el-table-column>
-        <el-table-column label="是否可用" align="center">
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.status == '1'" @change="changeStatus(scope.row)">
-            </el-switch>
-          </template>
-        </el-table-column>
         <el-table-column label="串码" align="center">
           <template slot-scope="scope">
             {{scope.row.number}}
@@ -66,6 +60,12 @@
         <el-table-column label="备注">
           <template slot-scope="scope">
             <div>{{scope.row.remark}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否可用" align="center">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.status == '1'" @change="changeStatus(scope.row)">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
@@ -97,7 +97,7 @@ export default {
     }
   },
   created() {
-    // this.fetchData();
+    this.fetchData();
   },
   mounted() {
     this.boxTop = this.$refs.indexTable.getBoundingClientRect().top;
@@ -137,14 +137,14 @@ export default {
         type: 'warning'
       }).then(() => {
         addGoods({
-        	id: row.id,
-        	classifyId: row.classifyId,
-        	supplierId: row.supplierId,
-        	name: row.name,
-        	number: row.number,
-        	price: row.price,
-        	image: row.image,
-        	remark: row.remark,
+          id: row.id,
+          classifyId: row.classifyId,
+          supplierId: row.supplierId,
+          name: row.name,
+          number: row.number,
+          price: row.price,
+          image: row.image,
+          remark: row.remark,
           status: row.status == '1' ? '0' : '1'
         }).then(res => {
           this.$message({

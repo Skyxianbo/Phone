@@ -41,7 +41,7 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-          const data = response.data
+          const data = response.returnValue;
           setToken(data.token)
           commit('SET_TOKEN', data.token)
           resolve()
@@ -93,13 +93,11 @@ const user = {
     GetPermission({ commit }, callback) {
       return new Promise(resolve => {
         getPermission().then(response => {
-//      	commit('SET_PERMISSION_TREE',response.returnValue);
           commit('SET_PERMISSION_TREE', response.returnValue.permission);
           commit('SET_ROLES', response.returnValue.role);
           commit('SET_NAME', response.returnValue.name || 'AUTH');
           if (resolve) {
             resolve(response.returnValue.permission);
-//          resolve(response.returnValue);
           }
         })
       })

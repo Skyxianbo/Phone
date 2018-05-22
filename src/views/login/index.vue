@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <!-- <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px"
+    <el-form autoComplete="on" :model="loginForm" ref="loginForm" label-position="left" label-width="0px"
       class="card-box login-form">
       <h3 class="title">vue-element-admin</h3>
       <el-form-item prop="username">
@@ -22,11 +22,7 @@
           Sign in
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        </span> password: admin</span>
-      </div>
-    </el-form> -->
+    </el-form>
   </div>
 </template>
 <script>
@@ -35,28 +31,29 @@
 
 export default {
   name: 'login',
-  // computed: {
-  //   permissionTree: function() {
-  //     return this.$store.state.user.permissionTree;
-  //   }
-  // },
-  // watch: {
-  //   permissionTree: function(value) {
-  //     if (value.length == 0) {
-  //       this.$router.push({ path: '/404' })
-  //     }
-  //     var name;
-  //     if (value[0].children.length > 0) {
-  //       name = value[0].children[0].name;
-  //     } else {
-  //       name = value[0].name;
-  //     }
-  //     this.$router.push({ name: name });
-  //   }
-  // },
+  data() {
+    return {
+      pwdType: 'password',
+      loading: false,
+      loginForm: {
+        username: '',
+        password: ''
+      }
+    }
+  },
   created: function() {
     // setToken(this.$route.query.token);
-    this.$router.push({ name: 'goods' })
+    // this.$router.push({ name: 'goods' })
+  },
+  methods: {
+    showPwd() {
+      this.pwdType = this.pwdType == 'password' ? 'text' : 'password';
+    },
+    handleLogin() {
+      this.$store.dispatch('Login', this.loginForm).then(() => {
+        this.$router.push({ name: 'goods' });
+      });
+    }
   }
 }
 

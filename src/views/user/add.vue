@@ -1,19 +1,15 @@
 <template>
-
+  <div class="app-container">
+    <user-detail></user-detail>
+  </div>
 </template>
 <script>
-	export default {
-		name: 'goods',
-		data() {
-			return {
+import userDetail from './components/userDetail';
+export default {
+  name: 'userAdd',
+  components: {
+  	userDetail
+  }
+}
 
-			}
-		},
-		created() {
-
-		},
-		methods: {
-
-		}
-	}
 </script>
