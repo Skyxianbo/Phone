@@ -60,7 +60,10 @@ export default {
     return {
       formData: {},
       flag: true,
-      rules: {}
+      rules: {
+        name: [{ required: true, message: "请输入供应商名称" }],
+        code: [{ required: true, message: "请输入供应商代码" }]
+      }
     }
   },
   computed: {
@@ -102,16 +105,12 @@ export default {
         tel: '',
         other: ''
       };
-      this.rules = {
-        name: [{ required: true, message: "请输入供应商名称" }],
-        code: [{ required: true, message: "请输入供应商代码" }]
-      };
     },
     getSupplier() {
       getSupplier({
         id: this.$route.params.id
       }).then(res => {
-        const data = res.returnValue;
+        const data = res.returnValue[0];
         this.formData = {
           name: data.name,
           code: data.code,

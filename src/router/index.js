@@ -88,7 +88,7 @@ export const constantRouterMap = [
       component: _import('supplier/add'),
       meta: { title: '添加供应商', icon: 'example', noCache: false, new: true }
     }, {
-      path: 'update',
+      path: 'update/id/:id',
       name: 'SupplierUpdate',
       hidden: true,
       component: _import('supplier/update'),
@@ -115,7 +115,7 @@ export const constantRouterMap = [
       component: _import('user/add'),
       meta: { title: '添加会员', icon: 'example', noCache: false, new: true }
     }, {
-      path: 'update',
+      path: 'update/id/:id',
       name: 'UserUpdate',
       hidden: true,
       component: _import('user/update'),

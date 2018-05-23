@@ -72,7 +72,10 @@ export default {
     return {
       formData: {},
       flag: true,
-      rules: {}
+      rules: {
+        userName: [{ required: true, message: "请输入用户名" }],
+        passWord: [{ required: true, message: "请输入密码" }]
+      }
     }
   },
   computed: {
@@ -99,6 +102,7 @@ export default {
     this.view.new = false;
   },
   activated() {
+      console.log(this.view.new)
     if (this.view.new) {
       this.isEdit ? this.getUser() : this.clearForm();
       this.view.new = false;
@@ -116,16 +120,12 @@ export default {
         level: '',
         other: ''
       };
-      this.rules = {
-        userName: [{ required: true, message: "请输入用户名" }],
-        passWord: [{ required: true, message: "请输入密码" }]
-      };
     },
     getUser() {
       getUser({
         id: this.$route.params.id
       }).then(res => {
-        const data = res.returnValue;
+        const data = res.returnValue[0];
         this.formData = {
           userName: data.userName,
           passWord: data.passWord,
@@ -140,17 +140,20 @@ export default {
     },
     sendData() {
       let param = {
-        name: this.formData.name,
-        code: this.formData.code,
+        userName: this.formData.userName,
+        passWord: this.formData.passWord,
+        realName: this.formData.realName,
+        idCard: this.formData.idCard,
         adress: this.formData.adress,
-        person: this.formData.person,
-        tel: this.formData.tel,
-        other: this.formData.other
+        income: this.formData.income,
+        level: this.formData.level,
+        other: this.formData.other,
+        status: 1
       };
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           param.id = this.isEdit ? this.$route.params.id : '';
-          const msg = this.isEdit ? `您确认要编辑id为${param.id}，名称为${param.name}的用户吗？` : `您确认要添加名称为${param.name}的用户吗？`;
+          const msg = this.isEdit ? `您确认要编辑id为${param.id}，名称为${param.userName}的用户吗？` : `您确认要添加名称为${param.userName}的用户吗？`;
           this.$confirm(msg, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
