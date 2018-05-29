@@ -20,7 +20,7 @@
             {{scope.row.id}}
           </template>
         </el-table-column>
-        <el-table-column label="分类名称" align="center">
+        <el-table-column label="品牌名称" align="center">
           <template slot-scope="scope">
             {{scope.row.name}}
           </template>
@@ -32,9 +32,9 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog :title="isEdit ? '分类编辑' : '分类添加'" :visible.sync="ifDialog" width="700px" v-if="ifDialog">
+    <el-dialog :title="isEdit ? '品牌编辑' : '品牌添加'" :visible.sync="ifDialog" width="700px" v-if="ifDialog">
       <el-form ref="dataForm" label-position="left" label-width="100px" style='width: 400px; margin-left:50px;'>
-        <el-form-item label="分类名称：" prop="name">
+        <el-form-item label="品牌名称：" prop="name">
           <el-input size="medium" v-model="formData.name"></el-input>
         </el-form-item>
       </el-form>
@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-import { getClassify, addClassify } from '@/api/goods';
+import { getTrademark, addTrademark } from '@/api/goods';
 export default {
   data() {
     return {
@@ -71,8 +71,8 @@ export default {
   },
   methods: {
     fetchData() {
-      getClassify({
-        parent: 0
+      getTrademark({
+        parent: 1
       }).then(res => {
         this.list = res.returnValue;
       })
@@ -82,7 +82,7 @@ export default {
     },
     openDialog(row) {
       this.currentId = row.id;
-      getClassify({
+      getTrademark({
         id: row.id
       }).then((res) => {
         this.formData.name = res.returnValue[0].name;
@@ -93,10 +93,10 @@ export default {
     sendData() {
       let param = {
         name: this.formData.name,
-        parent: 0
+        parent: 1
       }
       param.id = this.isEdit ? this.currentId : '';
-      addClassify(param).then(() => {
+      addTrademark(param).then(() => {
         const message = this.isEdit ? '已编辑' : '已添加';
         this.$message.success(message);
         this.ifDialog = false;

@@ -9,7 +9,7 @@
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" v-if="!isEdit">
           <el-form-item label-width="100px" prop="passWord" label="密码:" class="postInfo-container-item">
             <el-input size="medium" v-model="formData.passWord" placeholder="请输入密码" style="width: 400px">
             </el-input>
@@ -72,10 +72,7 @@ export default {
     return {
       formData: {},
       flag: true,
-      rules: {
-        userName: [{ required: true, message: "请输入用户名" }],
-        passWord: [{ required: true, message: "请输入密码" }]
-      }
+
     }
   },
   computed: {
@@ -102,7 +99,7 @@ export default {
     this.view.new = false;
   },
   activated() {
-      console.log(this.view.new)
+    console.log(this.view.new)
     if (this.view.new) {
       this.isEdit ? this.getUser() : this.clearForm();
       this.view.new = false;
@@ -120,6 +117,16 @@ export default {
         level: '',
         other: ''
       };
+      if (this.isEdit) {
+        this.rules = {
+          userName: [{ required: true, message: "请输入用户名" }],
+        }
+      } else {
+        this.rules = {
+          userName: [{ required: true, message: "请输入用户名" }],
+          passWord: [{ required: true, message: "请输入密码" }]
+        }
+      }
     },
     getUser() {
       getUser({
@@ -141,7 +148,6 @@ export default {
     sendData() {
       let param = {
         userName: this.formData.userName,
-        passWord: this.formData.passWord,
         realName: this.formData.realName,
         idCard: this.formData.idCard,
         adress: this.formData.adress,
@@ -150,9 +156,13 @@ export default {
         other: this.formData.other,
         status: 1
       };
+      if (this.isEdit) {
+        param.id = this.$route.params.id;
+      } else {
+        param.passWord = this.formData.passWord;
+      }
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          param.id = this.isEdit ? this.$route.params.id : '';
           const msg = this.isEdit ? `您确认要编辑id为${param.id}，名称为${param.userName}的用户吗？` : `您确认要添加名称为${param.userName}的用户吗？`;
           this.$confirm(msg, '提示', {
             confirmButtonText: '确定',

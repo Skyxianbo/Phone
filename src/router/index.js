@@ -66,6 +66,12 @@ export const constantRouterMap = [
       hidden: false,
       component: _import('goods/classify'),
       meta: { title: '分类列表', icon: 'example', noCache: false, new: true }
+    }, {
+      path: 'trademark',
+      name: 'GoodsTrademark',
+      hidden: false,
+      component: _import('goods/trademark'),
+      meta: { title: '品牌列表', icon: 'example', noCache: false, new: true }
     }]
   },
   //供应商管理

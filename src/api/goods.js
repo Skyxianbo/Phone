@@ -31,3 +31,19 @@ export function getClassify(param) {
     params: param
   })
 }
+
+export function addTrademark(param) {
+  return request({
+    url: '/classify/add',
+    method: 'post',
+    data: param
+  })
+}
+
+export function getTrademark(param) {
+  return request({
+    url: '/classify/find',
+    method: 'get',
+    params: param
+  })
+}
