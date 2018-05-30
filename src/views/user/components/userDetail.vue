@@ -41,14 +41,9 @@
         </el-col>
         <el-col :span="24">
           <el-form-item label-width="100px" prop="level" label="等级:" class="postInfo-container-item">
-            <el-input size="medium" v-model="formData.level" placeholder="请输入等级" style="width: 200px">
-            </el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label-width="100px" prop="other" label="其他:" class="postInfo-container-item">
-            <el-input type="textarea" size="medium" v-model="formData.other" placeholder="请输入其他" style="width: 400px">
-            </el-input>
+            <el-select size="medium" v-model="formData.level" placeholder="请选择等级" style="width: 150px">
+              <el-option v-for="n in 5" :key="n" :label="n" :value="n"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -71,8 +66,7 @@ export default {
   data() {
     return {
       formData: {},
-      flag: true,
-
+      flag: true
     }
   },
   computed: {
@@ -99,7 +93,6 @@ export default {
     this.view.new = false;
   },
   activated() {
-    console.log(this.view.new)
     if (this.view.new) {
       this.isEdit ? this.getUser() : this.clearForm();
       this.view.new = false;
@@ -114,8 +107,7 @@ export default {
         idCard: '',
         adress: '',
         income: '',
-        level: '',
-        other: ''
+        level: ''
       };
       if (this.isEdit) {
         this.rules = {
@@ -126,7 +118,7 @@ export default {
           userName: [{ required: true, message: "请输入用户名" }],
           passWord: [{ required: true, message: "请输入密码" }]
         }
-      }
+      };
     },
     getUser() {
       getUser({
@@ -140,8 +132,7 @@ export default {
           idCard: data.idCard,
           adress: data.adress,
           income: data.income,
-          level: data.level,
-          other: data.other
+          level: data.level
         };
       });
     },
@@ -153,7 +144,6 @@ export default {
         adress: this.formData.adress,
         income: this.formData.income,
         level: this.formData.level,
-        other: this.formData.other,
         status: 1
       };
       if (this.isEdit) {

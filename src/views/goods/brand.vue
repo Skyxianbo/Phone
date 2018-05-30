@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-import { getTrademark, addTrademark } from '@/api/goods';
+import { getBrand, addBrand } from '@/api/goods';
 export default {
   data() {
     return {
@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     fetchData() {
-      getTrademark({
+      getBrand({
         parent: 1
       }).then(res => {
         this.list = res.returnValue;
@@ -82,7 +82,7 @@ export default {
     },
     openDialog(row) {
       this.currentId = row.id;
-      getTrademark({
+      getBrand({
         id: row.id
       }).then((res) => {
         this.formData.name = res.returnValue[0].name;
@@ -96,7 +96,7 @@ export default {
         parent: 1
       }
       param.id = this.isEdit ? this.currentId : '';
-      addTrademark(param).then(() => {
+      addBrand(param).then(() => {
         const message = this.isEdit ? '已编辑' : '已添加';
         this.$message.success(message);
         this.ifDialog = false;

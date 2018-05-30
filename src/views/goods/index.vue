@@ -37,35 +37,34 @@
             {{scope.row.classifyName}}
           </template>
         </el-table-column>
-        <el-table-column label="供应商名称" align="center">
+        <el-table-column label="品牌名称" align="center">
           <template slot-scope="scope">
-            {{scope.row.supplierName}}
+            {{scope.row.brandName}}
           </template>
         </el-table-column>
-        <el-table-column label="串码" align="center">
+        <el-table-column label="型号" align="center">
+          <template slot-scope="scope">
+            {{scope.row.model}}
+          </template>
+        </el-table-column>
+        <el-table-column label="配置" align="center">
+          <template slot-scope="scope">
+            {{scope.row.config}}
+          </template>
+        </el-table-column>
+        <el-table-column label="颜色" align="center">
+          <template slot-scope="scope">
+            {{scope.row.color}}
+          </template>
+        </el-table-column>
+        <el-table-column label="数量" align="center">
           <template slot-scope="scope">
             {{scope.row.number}}
-          </template>
-        </el-table-column>
-        <el-table-column label="价格" align="center">
-          <template slot-scope="scope">
-            {{scope.row.price}}
-          </template>
-        </el-table-column>
-        <el-table-column label="图片" align="center">
-          <template slot-scope="scope">
-            <img :src="scope.row.image" style="width: 50px;height: 50px; cursor: pointer" @click="openImgBox(scope.row.image)">
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <div>{{scope.row.remark}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="是否可用" align="center">
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.status == '1'" @change="changeStatus(scope.row)">
-            </el-switch>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
@@ -83,7 +82,6 @@
 </template>
 <script>
 import { getGoods, addGoods } from '@/api/goods';
-import { openImageBox } from '@/utils/common';
 export default {
   data() {
     return {
@@ -126,34 +124,6 @@ export default {
     handleCurrentChange(val) {
       this.pageNum = val;
       this.fetchData();
-    },
-    openImgBox(img) {
-      openImageBox(img);
-    },
-    changeStatus(row) {
-      this.$confirm(`您确认要${row.status == '1' ? '关闭' : '开启'}此商品吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        addGoods({
-          id: row.id,
-          classifyId: row.classifyId,
-          supplierId: row.supplierId,
-          name: row.name,
-          number: row.number,
-          price: row.price,
-          image: row.image,
-          remark: row.remark,
-          status: row.status == '1' ? '0' : '1'
-        }).then(res => {
-          this.$message({
-            type: 'success',
-            message: '更新成功!'
-          });
-          this.fetchData();
-        })
-      })
     }
   }
 }

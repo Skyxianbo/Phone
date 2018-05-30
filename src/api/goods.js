@@ -32,7 +32,7 @@ export function getClassify(param) {
   })
 }
 
-export function addTrademark(param) {
+export function addBrand(param) {
   return request({
     url: '/classify/add',
     method: 'post',
@@ -40,7 +40,7 @@ export function addTrademark(param) {
   })
 }
 
-export function getTrademark(param) {
+export function getBrand(param) {
   return request({
     url: '/classify/find',
     method: 'get',
