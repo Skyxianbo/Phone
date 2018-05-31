@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <router-link style="color: #409EFF" :to="{path: '/goods/add/id/'+scope.row.id, query: { name: scope.row.name }}">编辑</router-link>
+            <router-link style="color: #409EFF" :to="{path: '/goods/update/id/'+scope.row.id, query: { name: scope.row.name }}">编辑</router-link>
           </template>
         </el-table-column>
       </el-table>
@@ -101,6 +101,9 @@ export default {
     this.boxTop = this.$refs.indexTable.getBoundingClientRect().top;
     this.height = document.documentElement.clientHeight - this.boxTop - 50
     window.addEventListener('resize', this.handleResize);
+  },
+  activated() {
+    this.fetchData();
   },
   methods: {
     fetchData() {

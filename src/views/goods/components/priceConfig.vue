@@ -23,9 +23,6 @@
 				type: Array,
 				default() {}
 			}
-		},
-		created() {
-			console.log(this.selectData)
 		}
 	}
 </script>

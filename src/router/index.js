@@ -55,7 +55,7 @@ export const constantRouterMap = [
       component: _import('goods/add'),
       meta: { title: '添加商品', icon: 'example', noCache: false, new: true }
     }, {
-      path: 'update',
+      path: 'update/id/:id',
       name: 'GoodsUpdate',
       hidden: true,
       component: _import('goods/update'),
