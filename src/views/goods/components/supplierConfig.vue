@@ -31,7 +31,7 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<el-dialog title="查看串码" :visible.sync="ifDialog" width="600px" v-if="ifDialog">
+		<el-dialog title="查看串码" :visible.sync="ifDialog" width="600px" v-if="ifDialog" :append-to-body="true">
 			<el-input type="textarea" :autosize="{minRows: 2, maxRows: 10}" placeholder="请输入串码，串码间无需分隔" v-model="number"></el-input>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="commitNumber">提 交</el-button>

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <app-header></app-header>
     <navbar></navbar>
     <tags-view></tags-view>
     <keep-alive>
@@ -9,12 +10,13 @@
   </div>
 </template>
 <script>
-import { Navbar, TagsView } from '@/views/layout/components'
+import { Navbar, TagsView, AppHeader } from '@/views/layout/components'
 export default {
   name: 'app',
   components: {
     Navbar,
-    TagsView
+    TagsView,
+    AppHeader
   },
   computed: {
     key() {

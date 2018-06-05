@@ -76,7 +76,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
     position: fixed !important;
-    top: 50px;
+    top: 125px;
     z-index: 99;
     background: #fff;
     height: 34px;

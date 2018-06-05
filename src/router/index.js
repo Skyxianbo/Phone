@@ -149,6 +149,27 @@ export const constantRouterMap = [
       meta: { title: '订单详情', icon: 'example', noCache: false, new: true }
     }]
   },
+  //财务管理
+  {
+    path: '/finance',
+    component: Layout,
+    redirect: '/finance/index',
+    name: 'finance',
+    meta: { title: '财务管理', icon: 'example', noCache: false, new: true },
+    children: [{
+      path: 'index',
+      name: 'Finance',
+      hidden: false,
+      component: _import('finance/index'),
+      meta: { title: '财务管理', icon: 'example', noCache: false, new: true }
+    }, {
+      path: 'details',
+      name: 'FinanceDetails',
+      hidden: true,
+      component: _import('finance/details'),
+      meta: { title: '财务详情', icon: 'example', noCache: false, new: true }
+    }]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

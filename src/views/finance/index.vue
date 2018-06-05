@@ -14,6 +14,8 @@
         <div class="filter">
             <el-form class="form-container">
                 <el-input v-model="keywords" size="medium" placeholder="请输入订单ID/商品名称"></el-input>
+                <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
+                </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
             </el-form>
         </div>
@@ -54,6 +56,16 @@
                         <div>{{scope.row.actualPrices}}</div>
                     </template>
                 </el-table-column>
+                <el-table-column label="成本" align="center">
+                    <template slot-scope="scope">
+                        <div>{{scope.row.cost}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="利润" align="center">
+                    <template slot-scope="scope">
+                        <div>{{scope.row.profit}}</div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="是否付款" align="center">
                     <template slot-scope="scope">
                         {{scope.row.isPay}}
@@ -79,29 +91,9 @@
                         {{scope.row.datetime}}
                     </template>
                 </el-table-column>
-                <el-table-column label="用户名称" align="center">
-                    <template slot-scope="scope">
-                        <div>{{scope.row.userName}}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="地址" align="center">
-                    <template slot-scope="scope">
-                        <div>{{scope.row.adress}}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="联系人" align="center">
-                    <template slot-scope="scope">
-                        <div>{{scope.row.person}}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="电话" align="center">
-                    <template slot-scope="scope">
-                        <div>{{scope.row.tel}}</div>
-                    </template>
-                </el-table-column>
                 <el-table-column align="center" label="操作">
                     <template slot-scope="scope">
-                        <a href="#" style="color: #409EFF" @click.prevent="openSendDialog(scope.row)">发货</a>
+                        <a href="#" style="color: #409EFF" @click.prevent="openCostDialog(scope.row)">输入成本</a>
                     </template>
                 </el-table-column>
             </el-table>
@@ -110,20 +102,10 @@
                 </el-pagination>
             </div>
         </div>
-        <el-dialog title="发货" :visible.sync="ifSendDialog" width="800px" v-if="ifSendDialog">
+        <el-dialog title="发货" :visible.sync="ifCostDialog" width="600px" v-if="ifCostDialog">
             <el-form ref="dataForm" :model="formData" :rules="rules" label-width="120px">
-                <el-form-item class="el-form-item" label="物流单号：" prop="trackingNumber">
-                    <el-input size="medium" v-model.number="formData.trackingNumber" style="width: 300px;"></el-input>
-                </el-form-item>
-                <el-form-item class="el-form-item" label="填写串码：">
-                    <supplier-config :selectData="formData.numberConf"></supplier-config>
-                </el-form-item>
-                <el-form-item class="el-form-item" label="实付价格：" prop="actualPrices">
-                    <el-input size="medium" v-model.number="formData.actualPrices" style="width: 300px;"></el-input> 元
-                </el-form-item>
-                <el-form-item class="el-form-item" label="是否付款：" prop="isPay">
-                    <el-radio v-model="formData.isPay" :label="1">是</el-radio>
-                    <el-radio v-model="formData.isPay" :label="0">否</el-radio>
+                <el-form-item class="el-form-item" label="成本：" prop="cost">
+                    <el-input size="medium" v-model.number="formData.cost" style="width: 300px;"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -135,11 +117,7 @@
 <script>
 import { getOrder, addOrder } from '@/api/order';
 import { openImageBox } from '@/utils/common';
-import SupplierConfig from '../goods/components/supplierConfig';
 export default {
-    components: {
-        SupplierConfig
-    },
     data() {
         return {
             boxTop: '',
@@ -149,12 +127,12 @@ export default {
             pageNum: 1,
             pageSize: 20,
             keywords: '',
-            ifSendDialog: false,
+            datetime: [new Date(Date.now()), new Date(Date.now())],
+            ifCostDialog: false,
             currentOrder: {},
             formData: {},
             rules: {
-                trackingNumber: [{ required: true, type: "integer", message: "请输入物流单号" }],
-                actualPrices: [{ required: true, type: "integer", message: "请输入实付价格" }]
+                cost: [{ required: true, type: "integer", message: "请输入成本" }]
             }
         }
     },
@@ -192,21 +170,14 @@ export default {
         openImgBox(img) {
             openImageBox(img);
         },
-        openSendDialog(row) {
+        openCostDialog(row) {
             this.currentOrder = row;
-            this.ifSendDialog = true;
+            this.ifCostDialog = true;
             this.formData = {
-                trackingNumber: this.currentOrder.trackingNumber,
-                numberConf: JSON.parse(this.currentOrder.numberConf),
-                actualPrices: this.currentOrder.actualPrices,
-                isPay: this.currentOrder.isPay
+                cost: this.currentOrder.cost,
             };
         },
         sendData() {
-            if (this.formData.numberConf.length == 0) {
-                this.$message.warning('请选择供应商并输入券码');
-                return;
-            }
             let param = {
                 id: this.currentOrder.id,
                 goodsId: this.currentOrder.goodsId,
@@ -215,24 +186,24 @@ export default {
                 imageUrl: this.currentOrder.imageUrl,
                 audit: this.currentOrder.audit,
                 userId: this.currentOrder.userId,
-                trackingNumber: this.formData.trackingNumber,
+                trackingNumber: this.currentOrder.trackingNumber,
                 userName: this.currentOrder.userName,
                 price: this.currentOrder.price,
                 datetime: this.currentOrder.datetime,
                 adress: this.currentOrder.adress,
                 person: this.currentOrder.person,
                 tel: this.currentOrder.tel,
-                isPay: this.formData.isPay,
+                isPay: this.currentOrder.isPay,
                 totalPrices: this.currentOrder.totalPrices,
-                actualPrices: this.formData.actualPrices,
-                cost: this.currentOrder.cost,
+                actualPrices: this.currentOrder.actualPrices,
+                cost: this.formData.cost,
                 profit: this.currentOrder.profit,
-                numberConf: JSON.stringify(this.formData.numberConf)
+                numberConf: JSON.stringify(this.currentOrder.numberConf)
             }
             this.$refs["dataForm"].validate(valid => {
                 if (valid) {
                     addOrder(param).then(res => {
-                        this.ifSendDialog = false;
+                        this.ifCostDialog = false;
                     })
                 }
             })

@@ -66,7 +66,7 @@ export default {
   },
   mounted() {
     this.boxTop = this.$refs.indexTable.getBoundingClientRect().top;
-    this.height = document.documentElement.clientHeight - this.boxTop - 50
+    this.height = document.documentElement.clientHeight - this.boxTop - 125
     window.addEventListener('resize', this.handleResize);
   },
   methods: {
@@ -78,7 +78,7 @@ export default {
       })
     },
     handleResize() {
-      this.height = document.documentElement.clientHeight - this.boxTop - 50;
+      this.height = document.documentElement.clientHeight - this.boxTop - 125;
     },
     openDialog(row) {
       this.currentId = row.id;

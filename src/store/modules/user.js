@@ -44,6 +44,7 @@ const user = {
           const data = response.returnValue;
           setToken(data.token)
           commit('SET_TOKEN', data.token)
+          commit('SET_NAME', data.userName);
           resolve()
         }).catch(error => {
           reject(error)
@@ -74,14 +75,15 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
+        // logout(state.token).then(() => {
           commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
+          commit('SET_NAME', '');
+          commit('SET_ROLES', []);
           removeToken()
           resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 
