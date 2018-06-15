@@ -170,6 +170,21 @@ export const constantRouterMap = [
       meta: { title: '财务详情', icon: 'example', noCache: false, new: true }
     }]
   },
+  //系统管理
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/index',
+    name: 'system',
+    meta: { title: '系统管理', icon: 'example', noCache: false, new: true },
+    children: [{
+      path: 'index',
+      name: 'System',
+      hidden: false,
+      component: _import('system/index'),
+      meta: { title: '系统管理', icon: 'example', noCache: false, new: true }
+    }]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
