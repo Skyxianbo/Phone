@@ -114,7 +114,7 @@ export default {
       }
       getGoods(param).then(res => {
         this.list = res.returnValue.list;
-        this.total = res.returnValue.total;
+        this.total = res.returnValue.totalCount;
       })
     },
     handleResize() {

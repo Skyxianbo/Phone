@@ -8,19 +8,24 @@
     }
 }
 
+.red {
+    color: red;
+}
+
 </style>
 <template>
     <div class="app-container">
         <div class="filter">
             <el-form class="form-container">
                 <el-input v-model="keywords" size="medium" placeholder="请输入订单ID/商品名称"></el-input>
+                <el-input v-model="number" size="medium" placeholder="请输入串码"></el-input>
                 <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
                 </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
             </el-form>
         </div>
         <div ref="indexTable">
-            <el-table :height="height" :data="list" element-loading-text="Loading" border fit highlight-current-row>
+            <el-table :height="height" :data="list" element-loading-text="Loading" border fit highlight-current-row :row-class-name="tableRowClassName">
                 <el-table-column label='订单ID' align="center">
                     <template slot-scope="scope">
                         {{scope.row.id}}
@@ -28,7 +33,7 @@
                 </el-table-column>
                 <el-table-column label="商品名称" align="center">
                     <template slot-scope="scope">
-                        {{scope.row.goodsName}}
+                        {{scope.row.name}}
                     </template>
                 </el-table-column>
                 <el-table-column label="单价" align="center">
@@ -36,14 +41,33 @@
                         {{scope.row.price}}
                     </template>
                 </el-table-column>
-                <el-table-column label="订单数量" align="center">
+                <el-table-column label="型号" align="center">
                     <template slot-scope="scope">
+                        {{scope.row.model}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="配置" align="center">
+                    <template slot-scope="scope">
+                        {{scope.row.config}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="颜色" align="center">
+                    <template slot-scope="scope">
+                        {{scope.row.color}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="订单数量" align="center">
+                    <template slot-scope="scope" v-if="scope.row.number != '合计'">
                         {{scope.row.number}}
                     </template>
                 </el-table-column>
                 <el-table-column label="串码" align="center">
                     <template slot-scope="scope">
-                        {{scope.row.numberConf.number}}
+                        <div v-if="getNumber(scope.row.numberConf).length <= 13">{{getNumber(scope.row.numberConf)}}</div>
+                        <div v-else>
+                            <span>{{getNumber(scope.row.numberConf).substring(0, 13)}}...</span>
+                            <a href="#" style="color: #409EFF" @click="showContent(getNumber(scope.row.numberConf))">查看更多</a>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column label="总价" align="center">
@@ -67,18 +91,22 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="是否付款" align="center">
-                    <template slot-scope="scope">
-                        {{scope.row.isPay}}
+                    <template slot-scope="scope" v-if="scope.row.number != '合计'">
+                        <span :class="{red: scope.row.isPay == 0}" v-if="scope.row.number != '合计'">
+                            {{scope.row.isPay == 1 ? '已付款' : '未付款'}}
+                        </span>
                     </template>
                 </el-table-column>
                 <el-table-column label="付款图片" align="center">
                     <template slot-scope="scope">
-                        <img :src="scope.row.imageUrl" style="width: 50px;height: 50px; cursor: pointer" @click="openImgBox(scope.row.imageUrl)">
+                        <img :src="scope.row.imageUrl" style="width: 50px;height: 50px; cursor: pointer" @click="openImgBox(scope.row.imageUrl)" v-if="scope.row.number != '合计'">
                     </template>
                 </el-table-column>
                 <el-table-column label="是否发货" align="center">
                     <template slot-scope="scope">
-                        {{scope.row.audit}}
+                        <span :class="{red: scope.row.audit == 0}" v-if="scope.row.number != '合计'">
+                            {{scope.row.audit == 1 ? '已发货' : '未发货'}}
+                        </span>
                     </template>
                 </el-table-column>
                 <el-table-column label="快递单号" align="center">
@@ -88,12 +116,12 @@
                 </el-table-column>
                 <el-table-column label="时间" align="center">
                     <template slot-scope="scope">
-                        {{scope.row.datetime}}
+                        {{scope.row.createTime}}
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="操作">
                     <template slot-scope="scope">
-                        <a href="#" style="color: #409EFF" @click.prevent="openCostDialog(scope.row)">输入成本</a>
+                        <a href="#" style="color: #409EFF" @click.prevent="openCostDialog(scope.row)" v-if="scope.row.number != '合计'">输入成本</a>
                     </template>
                 </el-table-column>
             </el-table>
@@ -112,11 +140,15 @@
                 <el-button size="medium" type="primary" @click.prevent="sendData">提 交</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="串码" :visible.sync="ifDialog" width="600px">
+            <p style="wordWrap: break-word">{{content}}</p>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { getOrder, addOrder } from '@/api/order';
 import { openImageBox } from '@/utils/common';
+import { formatDate } from '@/utils/data';
 export default {
     data() {
         return {
@@ -127,13 +159,16 @@ export default {
             pageNum: 1,
             pageSize: 20,
             keywords: '',
-            datetime: [new Date(Date.now()), new Date(Date.now())],
+            number: '',
+            datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())],
             ifCostDialog: false,
             currentOrder: {},
             formData: {},
             rules: {
-                cost: [{ required: true, type: "integer", message: "请输入成本" }]
-            }
+                cost: [{ required: true, message: "请输入成本" }]
+            },
+            content: '',
+            ifDialog: false
         }
     },
     created() {
@@ -148,12 +183,19 @@ export default {
         fetchData() {
             let param = {
                 keywords: this.keywords,
+                number: this.number,
+                startTime: formatDate(this.datetime[0]) + ' 00:00:00',
+                endTime: formatDate(this.datetime[1]) + ' 23:59:59',
                 pageSize: this.pageSize,
-                pageNum: this.pageNum
+                pageNum: this.pageNum,
+                type: 2
             }
             getOrder(param).then(res => {
                 this.list = res.returnValue.list;
-                this.total = res.returnValue.total;
+                this.total = res.returnValue.totalCount;
+                const arr = this.list.splice(this.list.length - 1, 1);
+                arr[0].id = '合计';
+                this.list.unshift(arr[0]);
             })
         },
         handleResize() {
@@ -198,7 +240,7 @@ export default {
                 actualPrices: this.currentOrder.actualPrices,
                 cost: this.formData.cost,
                 profit: this.currentOrder.profit,
-                numberConf: JSON.stringify(this.currentOrder.numberConf)
+                numberConf: this.currentOrder.numberConf
             }
             this.$refs["dataForm"].validate(valid => {
                 if (valid) {
@@ -207,6 +249,23 @@ export default {
                     })
                 }
             })
+        },
+        tableRowClassName({ row, rowIndex }) {
+            if (rowIndex === 0) {
+                return 'success-row';
+            }
+            return '';
+        },
+        getNumber(numberConf) {
+            if (!numberConf) {
+                return '';
+            } else {
+                return JSON.parse(numberConf)[0].number;
+            }
+        },
+        showContent(content) {
+            this.content = content;
+            this.ifDialog = true;
         }
     }
 }

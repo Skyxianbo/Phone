@@ -104,50 +104,15 @@ export default {
   methods: {
     fetchData() {
       let param = {
-        keywords: this.keywords,
-        // pageSize: this.pageSize,
-        // pageNum: this.pageNum
+        keywords: this.keywords
       }
       getSupplier(param).then(res => {
         this.list = res.returnValue;
-        // this.total = res.returnValue.total;
       })
     },
     handleResize() {
       this.height = document.documentElement.clientHeight - this.boxTop - 125;
-    },
-    // handleSizeChange(val) {
-    //   this.pageSize = val;
-    //   this.fetchData();
-    // },
-    // handleCurrentChange(val) {
-    //   this.pageNum = val;
-    //   this.fetchData();
-    // },
-    // changeStatus(row) {
-    //   this.$confirm(`您确认要${row.status == '1' ? '关闭' : '开启'}此供应商吗？`, '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     addSupplier({
-    //       id: row.id,
-    //       name: row.name,
-    //       code: row.code,
-    //       adress: row.adress,
-    //       person: row.person,
-    //       tel: row.tel,
-    //       other: row.other,
-    //       status: row.status == '1' ? '0' : '1'
-    //     }).then(res => {
-    //       this.$message({
-    //         type: 'success',
-    //         message: '更新成功!'
-    //       });
-    //       this.fetchData();
-    //     })
-    //   })
-    // }
+    }
   }
 }
 

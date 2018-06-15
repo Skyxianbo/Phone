@@ -15,6 +15,7 @@
 	</div>
 </template>
 <script>
+import { getUser } from '@/utils/auth';
 export default {
 	computed: {
 		date: function() {
@@ -23,10 +24,13 @@ export default {
 			return myDate.getFullYear() + '年' + (myDate.getMonth() + 1) + '月' + myDate.getDate() + '日' + ' 星期' + week[myDate.getDay()];
 		},
 		username: function() {
-			return this.$store.state.user.name || 'Sky';
+			return this.$store.state.user.name || this.user.userName;
 		},
 		show: function() {
 			return (this.$route.name != 'login' && this.$route.name != 'error');
+		},
+		user: function() {
+			return getUser() || {};
 		}
 	},
 	methods: {
