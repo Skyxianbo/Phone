@@ -15,3 +15,11 @@ export function addUser(param) {
     data: param
   })
 }
+
+export function deleteUser(param) {
+  return request({
+    url: '/user/delete',
+    method: 'post',
+    data: param
+  })
+}

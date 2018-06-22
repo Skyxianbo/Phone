@@ -16,6 +16,14 @@ export function addGoods(param) {
   })
 }
 
+export function deleteGoods(param) {
+  return request({
+    url: '/goods/delete',
+    method: 'post',
+    data: param
+  })
+}
+
 export function addClassify(param) {
   return request({
     url: '/classify/add',

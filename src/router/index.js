@@ -170,6 +170,27 @@ export const constantRouterMap = [
       meta: { title: '财务详情', icon: 'example', noCache: false, new: true }
     }]
   },
+  //串码管理
+  {
+    path: '/number',
+    component: Layout,
+    redirect: '/number/index',
+    name: 'number',
+    meta: { title: '串码管理', icon: 'example', noCache: false, new: true },
+    children: [{
+      path: 'index',
+      name: 'Number',
+      hidden: false,
+      component: _import('number/index'),
+      meta: { title: '串码管理', icon: 'example', noCache: false, new: true }
+    }, {
+      path: 'details',
+      name: 'NumberDetails',
+      hidden: true,
+      component: _import('number/details'),
+      meta: { title: '串码详情', icon: 'example', noCache: false, new: true }
+    }]
+  },
   //系统管理
   {
     path: '/system',

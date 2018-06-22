@@ -19,6 +19,14 @@
             <el-form class="form-container">
                 <el-input v-model="keywords" size="medium" placeholder="请输入订单ID/商品名称"></el-input>
                 <el-input v-model="number" size="medium" placeholder="请输入串码"></el-input>
+                <!-- <el-select size="medium" v-model="isPay" clearable placeholder="请选择付款状态">
+                    <el-option :key="1" :label="已付款" :value="1"></el-option>
+                    <el-option :key="0" :label="未付款" :value="0"></el-option>
+                </el-select> -->
+                <el-select size="medium" v-model="audit" clearable placeholder="请选择发货状态">
+                    <el-option :key="1" :label="已发货" :value="1"></el-option>
+                    <el-option :key="0" :label="未发货" :value="0"></el-option>
+                </el-select>
                 <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
                 </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
@@ -160,6 +168,8 @@ export default {
             pageSize: 20,
             keywords: '',
             number: '',
+            // isPay: '',
+            audit: '',
             datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())],
             ifCostDialog: false,
             currentOrder: {},
@@ -186,6 +196,8 @@ export default {
                 number: this.number,
                 startTime: formatDate(this.datetime[0]) + ' 00:00:00',
                 endTime: formatDate(this.datetime[1]) + ' 23:59:59',
+                // isPay: this.isPay,
+                audit: this.audit,
                 pageSize: this.pageSize,
                 pageNum: this.pageNum,
                 type: 2

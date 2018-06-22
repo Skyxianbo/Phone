@@ -3,13 +3,20 @@
         <el-form class="form-container" :model="formData" :rules="rules" ref="dataForm">
             <div class="title-block">基本信息</div>
             <el-row>
-                <!-- 商品名称 -->
+                <!-- 商品型号 -->
                 <el-col :span="24">
+                    <el-form-item label-width="100px" prop="model" label="型号" class="postInfo-container-item">
+                        <el-input size="medium" v-model="formData.model" placeholder="请输入商品型号" style="width: 400px">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <!-- 商品名称 -->
+                <!-- <el-col :span="24">
                     <el-form-item label-width="100px" prop="name" label="名称" class="postInfo-container-item">
                         <el-input size="medium" v-model="formData.name" placeholder="请输入商品名称" style="width: 400px">
                         </el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
                 <!-- 商品分类 -->
                 <el-col :span="24">
                     <el-form-item label-width="100px" prop="classifyId" label="分类" class="postInfo-container-item">
@@ -26,13 +33,6 @@
                             <el-option v-for="item in brandList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-form-item>
-                </el-col>
-                <!-- 商品型号 -->
-                <el-col :span="24">
-                    <el-form-item label-width="100px" prop="model" label="型号" class="postInfo-container-item">
-                        <el-input size="medium" v-model="formData.model" placeholder="请输入商品型号" style="width: 400px">
-                        </el-input>
                     </el-form-item>
                 </el-col>
                 <!-- 商品配置 -->
@@ -107,7 +107,7 @@ export default {
             flag: true,
             formData: {},
             rules: {
-                name: [{ required: true, message: "请输入商品名称" }],
+                // name: [{ required: true, message: "请输入商品名称" }],
                 classifyId: [{ required: true, message: "请选择商品分类" }],
                 brandId: [{ required: true, message: "请选择商品品牌" }],
                 model: [{ required: true, message: "请选择商品型号" }],
@@ -151,7 +151,7 @@ export default {
         // 初始化数据
         initData() {
             this.formData = {
-                name: '', //商品名称
+                // name: '', //商品名称
                 classifyId: '', //商品分类
                 brandId: '', //商品品牌
                 model: '', //商品型号
@@ -161,20 +161,25 @@ export default {
                 remark: '', //备注
                 priceConf: [{
                     level: 1,
-                    price: ''
+                    price: '',
+                    provincePrice: ''
                 }, {
                     level: 2,
                     price: '',
+                    provincePrice: ''
                 }, {
                     level: 3,
-                    price: ''
+                    price: '',
+                    provincePrice: ''
                 }, {
                     level: 4,
-                    price: ''
+                    price: '',
+                    provincePrice: ''
                 }, {
                     level: 5,
-                    price: ''
-                }], //会员等级对应价格配置
+                    price: '',
+                    provincePrice: ''
+                }], //会员等级对应价格配置, price为全国价格，provincePrice为省内价格
                 providerConf: [] //供应商配置
             };
         },
@@ -203,7 +208,7 @@ export default {
             }).then(res => {
                 const data = res.returnValue.list[0];
                 this.formData = {
-                    name: data.name,
+                    // name: data.name,
                     classifyId: data.classifyId,
                     brandId: data.brandId,
                     model: data.model,
@@ -211,7 +216,7 @@ export default {
                     color: data.color,
                     number: data.number,
                     remark: data.remark,
-                    priceConf: JSON.parse(data.priceConf),
+                    priceConf: this.formatPrice('get', JSON.parse(data.priceConf)),
                     providerConf: JSON.parse(data.providerConf)
                 };
             });
@@ -219,7 +224,7 @@ export default {
         // 新增/编辑商品
         sendData() {
             let param = {
-                name: this.formData.name,
+                // name: this.formData.name,
                 classifyId: this.formData.classifyId,
                 brandId: this.formData.brandId,
                 model: this.formData.model,
@@ -227,15 +232,15 @@ export default {
                 color: this.formData.color,
                 number: this.formData.number,
                 remark: this.formData.remark,
-                priceConf: JSON.stringify(this.formData.priceConf),
+                priceConf: JSON.stringify(this.formatPrice('set', this.formData.priceConf)),
                 providerConf: JSON.stringify(this.formData.providerConf)
             };
-            param.classifyName = this.classifyList.find(item => item.id == param.classifyId).name;
-            param.brandName = this.brandList.find(item => item.id == param.brandId).name;
+            param.classifyName = (this.classifyList.find(item => item.id == param.classifyId) || {}).name;
+            param.brandName = (this.brandList.find(item => item.id == param.brandId) || {}).name;
             this.$refs["dataForm"].validate(valid => {
                 if (valid) {
                     param.id = this.isEdit ? this.$route.params.id : '';
-                    const msg = this.isEdit ? `您确认要编辑id为${param.id}，名称为${param.name}的商品吗？` : `您确认要添加名称为${param.name}的商品吗？`;
+                    const msg = this.isEdit ? `您确认要编辑id为${param.id}，型号为${param.model}的商品吗？` : `您确认要添加型号为${param.model}的商品吗？`;
                     this.$confirm(msg, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -268,6 +273,76 @@ export default {
         clearForm() {
             this.initData();
             this.$refs["dataForm"].resetFields();
+        },
+        formatPrice(type, initial_data) {
+            if (type == 'set') {
+                const result_data = [];
+                initial_data.forEach((x) => {
+                    // 编辑时需push id和goodsId，新增时不需要
+                    if (this.isEdit) {
+                        // push全国价格
+                        result_data.push({
+                            id: x.id,
+                            goodsId: x.goodsId,
+                            level: x.level,
+                            price: x.price,
+                            type: 1
+                        })
+                        // push省内价格
+                        result_data.push({
+                            id: x.id,
+                            goodsId: x.goodsId,
+                            level: x.level,
+                            price: x.provincePrice,
+                            type: 2
+                        })
+                    } else {
+                        // push全国价格
+                        result_data.push({
+                            level: x.level,
+                            price: x.price,
+                            type: 1
+                        })
+                        // push省内价格
+                        result_data.push({
+                            level: x.level,
+                            price: x.provincePrice,
+                            type: 2
+                        })
+                    }
+                })
+                return result_data;
+            } else if (type == 'get') {
+                const result_data = [{
+                    level: 1,
+                    price: '',
+                    provincePrice: ''
+                }, {
+                    level: 2,
+                    price: '',
+                    provincePrice: ''
+                }, {
+                    level: 3,
+                    price: '',
+                    provincePrice: ''
+                }, {
+                    level: 4,
+                    price: '',
+                    provincePrice: ''
+                }, {
+                    level: 5,
+                    price: '',
+                    provincePrice: ''
+                }]
+                initial_data.forEach((x) => {
+                    if (x.type == 1) {
+                        result_data[x.level - 1].price = x.price;
+                    } else if (x.type == 2) {
+                        result_data[x.level - 1].provincePrice = x.price;
+                    }
+                })
+                return result_data;
+            }
         }
     }
 }

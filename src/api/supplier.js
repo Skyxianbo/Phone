@@ -15,3 +15,11 @@ export function addSupplier(param) {
     data: param
   })
 }
+
+export function deleteSupplier(param) {
+  return request({
+    url: '/supplier/delete',
+    method: 'post',
+    data: param
+  })
+}

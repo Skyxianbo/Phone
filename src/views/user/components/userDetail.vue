@@ -34,8 +34,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="income" label="资金:" class="postInfo-container-item">
-            <el-input size="medium" v-model="formData.income" placeholder="请输入资金" style="width: 400px">
+          <el-form-item label-width="100px" prop="income" label="押金:" class="postInfo-container-item">
+            <el-input size="medium" v-model="formData.income" placeholder="请输入押金" style="width: 400px">
             </el-input> 元
           </el-form-item>
         </el-col>
