@@ -10,13 +10,6 @@
                         </el-input>
                     </el-form-item>
                 </el-col>
-                <!-- 商品名称 -->
-                <!-- <el-col :span="24">
-                    <el-form-item label-width="100px" prop="name" label="名称" class="postInfo-container-item">
-                        <el-input size="medium" v-model="formData.name" placeholder="请输入商品名称" style="width: 400px">
-                        </el-input>
-                    </el-form-item>
-                </el-col> -->
                 <!-- 商品分类 -->
                 <el-col :span="24">
                     <el-form-item label-width="100px" prop="classifyId" label="分类" class="postInfo-container-item">
@@ -107,7 +100,6 @@ export default {
             flag: true,
             formData: {},
             rules: {
-                // name: [{ required: true, message: "请输入商品名称" }],
                 classifyId: [{ required: true, message: "请选择商品分类" }],
                 brandId: [{ required: true, message: "请选择商品品牌" }],
                 model: [{ required: true, message: "请选择商品型号" }],
@@ -151,7 +143,6 @@ export default {
         // 初始化数据
         initData() {
             this.formData = {
-                // name: '', //商品名称
                 classifyId: '', //商品分类
                 brandId: '', //商品品牌
                 model: '', //商品型号

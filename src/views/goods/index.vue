@@ -27,11 +27,6 @@
                         {{scope.row.id}}
                     </template>
                 </el-table-column>
-                <!-- <el-table-column label="商品名称" align="center">
-                    <template slot-scope="scope">
-                        {{scope.row.name}}
-                    </template>
-                </el-table-column> -->
                 <el-table-column label="商品型号" align="center">
                     <template slot-scope="scope">
                         {{scope.row.model}}

@@ -4,37 +4,37 @@
       <div class="title-block">基本信息</div>
       <el-row>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="name" label="供应商名称:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="name" label="供应商名称:" class="postInfo-container-item">
             <el-input size="medium" v-model="formData.name" placeholder="请输入供应商名称" style="width: 400px">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="code" label="供应商代码:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="code" label="供应商代码:" class="postInfo-container-item">
             <el-input size="medium" v-model="formData.code" placeholder="请输入供应商代码" style="width: 400px">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="adress" label="供应商地址:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="adress" label="供应商地址:" class="postInfo-container-item">
             <el-input type="textarea" size="medium" v-model="formData.adress" placeholder="请输入供应商地址" style="width: 400px">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="person" label="供应商联系人:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="person" label="供应商联系人:" class="postInfo-container-item">
             <el-input size="medium" v-model="formData.person" placeholder="请输入供应商联系人" style="width: 400px">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="tel" label="供应商电话:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="tel" label="供应商电话:" class="postInfo-container-item">
             <el-input size="medium" v-model="formData.tel" placeholder="请输入供应商电话" style="width: 200px">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="100px" prop="other" label="其他:" class="postInfo-container-item">
+          <el-form-item label-width="150px" prop="other" label="其他:" class="postInfo-container-item">
             <el-input type="textarea" size="medium" v-model="formData.other" placeholder="请输入其他" style="width: 400px">
             </el-input>
           </el-form-item>
