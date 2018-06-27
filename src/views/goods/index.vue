@@ -13,7 +13,7 @@
     <div class="app-container">
         <div class="filter">
             <el-form class="form-container">
-                <el-input v-model="keywords" size="medium" placeholder="请输入商品ID/名称"></el-input>
+                <el-input v-model="keywords" size="medium" placeholder="请输入商品ID/型号"></el-input>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
                 <router-link v-bind="{to:'/goods/add'}">
                     <el-button size="medium" type="primary">添加</el-button>

@@ -40,6 +40,14 @@ export function getClassify(param) {
   })
 }
 
+export function deleteClassify(param) {
+  return request({
+    url: '/classify/delete',
+    method: 'post',
+    data: param
+  })
+}
+
 export function addBrand(param) {
   return request({
     url: '/classify/add',
@@ -53,5 +61,13 @@ export function getBrand(param) {
     url: '/classify/find',
     method: 'get',
     params: param
+  })
+}
+
+export function deleteBrand(param) {
+  return request({
+    url: '/classify/delete',
+    method: 'post',
+    data: param
   })
 }

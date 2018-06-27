@@ -27,7 +27,8 @@
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <a href="#" style="color: #409EFF" @click="openDialog(scope.row)">编辑</a>
+            <a href="#" style="color: #409EFF" @click.prevent="openDialog(scope.row)">编辑</a>
+            <a style="color: #409EFF" href="#" @click.prevent="deleteBrand(scope.row.id)">删除</a>
           </template>
         </el-table-column>
       </el-table>
@@ -46,7 +47,7 @@
   </div>
 </template>
 <script>
-import { getBrand, addBrand } from '@/api/goods';
+import { getBrand, addBrand, deleteBrand } from '@/api/goods';
 export default {
   data() {
     return {
@@ -108,6 +109,20 @@ export default {
       this.ifDialog = false;
       this.formData.name = '';
       this.currentId = '';
+    },
+    deleteBrand(id) {
+      this.$confirm(`您确认要删除此分类吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteBrand({
+          id: id,
+        }).then(res => {
+          this.$message.success('删除成功！');
+          this.fetchData();
+        })
+      }).catch(() => {})
     }
   }
 }

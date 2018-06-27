@@ -44,11 +44,6 @@
                         {{scope.row.model}}
                     </template>
                 </el-table-column>
-                <el-table-column label="单价" align="center">
-                    <template slot-scope="scope">
-                        {{scope.row.price}}
-                    </template>
-                </el-table-column>
                 <el-table-column label="配置" align="center">
                     <template slot-scope="scope">
                         {{scope.row.config}}
@@ -77,25 +72,6 @@
                 <el-table-column label="实际价格" align="center">
                     <template slot-scope="scope">
                         <div>{{scope.row.actualPrices}}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="是否付款" align="center">
-                    <template slot-scope="scope">
-                        <span :class="{red: scope.row.isPay == 0}">
-                            {{scope.row.isPay == 1 ? '已付款' : '未付款'}}
-                        </span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="付款图片" align="center">
-                    <template slot-scope="scope">
-                        <img :src="scope.row.imageUrl" style="width: 50px;height: 50px; cursor: pointer" @click="openImgBox(scope.row.imageUrl)">
-                    </template>
-                </el-table-column>
-                <el-table-column label="是否发货" align="center">
-                    <template slot-scope="scope">
-                        <span :class="{red: scope.row.audit == 0}">
-                            {{scope.row.audit == 1 ? '已发货' : '未发货'}}
-                        </span>
                     </template>
                 </el-table-column>
                 <el-table-column label="快递单号" align="center">
@@ -128,48 +104,18 @@
                         <div>{{scope.row.tel}}</div>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作">
-                    <template slot-scope="scope">
-                        <a href="#" style="color: #409EFF" @click.prevent="openSendDialog(scope.row)">{{scope.row.audit == 1 ? '编辑' : '发货'}}</a>
-                    </template>
-                </el-table-column>
             </el-table>
             <div class="block" ref="pages">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[1, 10, 20, 50, 100]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
                 </el-pagination>
             </div>
         </div>
-        <el-dialog title="发货" :visible.sync="ifSendDialog" width="800px" v-if="ifSendDialog">
-            <el-form ref="dataForm" :model="formData" :rules="rules" label-width="120px">
-                <el-form-item class="el-form-item" label="物流单号：" prop="trackingNumber">
-                    <el-input size="medium" v-model="formData.trackingNumber" style="width: 300px;"></el-input>
-                </el-form-item>
-                <el-form-item class="el-form-item" label="填写串码：">
-                    <supplier-config :selectData="formData.numberConf"></supplier-config>
-                </el-form-item>
-                <el-form-item class="el-form-item" label="实付价格：" prop="actualPrices">
-                    <el-input size="medium" v-model="formData.actualPrices" style="width: 300px;"></el-input> 元
-                </el-form-item>
-                <el-form-item class="el-form-item" label="是否付款：" prop="isPay">
-                    <el-radio v-model="formData.isPay" :label="1">是</el-radio>
-                    <el-radio v-model="formData.isPay" :label="0">否</el-radio>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button size="medium" type="primary" @click.prevent="sendData">提 交</el-button>
-            </div>
-        </el-dialog>
     </div>
 </template>
 <script>
-import { getOrder, addOrder } from '@/api/order';
-import { openImageBox } from '@/utils/common';
-import SupplierConfig from '../goods/components/supplierConfig';
+import { getOrder } from '@/api/order';
 import { formatDate } from '@/utils/data';
 export default {
-    components: {
-        SupplierConfig
-    },
     data() {
         return {
             boxTop: '',
@@ -182,14 +128,7 @@ export default {
             number: '',
             isPay: '',
             audit: '',
-            datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())],
-            ifSendDialog: false,
-            currentOrder: {},
-            formData: {},
-            rules: {
-                trackingNumber: [{ required: true, message: "请输入物流单号" }],
-                actualPrices: [{ required: true, message: "请输入实付价格" }]
-            }
+            datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())]
         }
     },
     created() {
@@ -229,61 +168,16 @@ export default {
             this.pageNum = val;
             this.fetchData();
         },
-        openImgBox(img) {
-            openImageBox(img);
-        },
-        openSendDialog(row) {
-            this.currentOrder = row;
-            this.ifSendDialog = true;
-            this.formData = {
-                trackingNumber: this.currentOrder.trackingNumber,
-                numberConf: JSON.parse(this.currentOrder.numberConf || '[]'),
-                actualPrices: this.currentOrder.actualPrices,
-                isPay: this.currentOrder.isPay
-            };
-        },
-        sendData() {
-            if (this.formData.numberConf.length == 0) {
-                this.$message.warning('请选择供应商并输入券码');
-                return;
-            }
-            let param = {
-                id: this.currentOrder.id,
-                goodsId: this.currentOrder.goodsId,
-                goodsName: this.currentOrder.goodsName,
-                number: this.currentOrder.number,
-                imageUrl: this.currentOrder.imageUrl,
-                audit: 1,
-                userId: this.currentOrder.userId,
-                trackingNumber: this.formData.trackingNumber,
-                userName: this.currentOrder.userName,
-                price: this.currentOrder.price,
-                datetime: this.currentOrder.datetime,
-                adress: this.currentOrder.adress,
-                person: this.currentOrder.person,
-                tel: this.currentOrder.tel,
-                isPay: this.formData.isPay,
-                totalPrices: this.currentOrder.totalPrices,
-                actualPrices: this.formData.actualPrices,
-                cost: this.currentOrder.cost,
-                profit: this.currentOrder.profit,
-                numberConf: JSON.stringify(this.formData.numberConf)
-            }
-            this.$refs["dataForm"].validate(valid => {
-                if (valid) {
-                    addOrder(param).then(res => {
-                        this.$message.success('已发货');
-                        this.ifSendDialog = false;
-                        this.fetchData();
-                    })
-                }
-            })
-        },
         getNumber(numberConf) {
+            var num = [];
             if (!numberConf) {
                 return '';
             } else {
-                return JSON.parse(numberConf)[0].number;
+                const arr = JSON.parse(numberConf);
+                arr.forEach((x) => {
+                    num.push(x.number);
+                })
+                return num.join(',');
             }
         }
     }
