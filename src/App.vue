@@ -7,16 +7,18 @@
       <router-view :key="key" v-if="!$route.meta.noCache"></router-view>
     </keep-alive>
     <router-view :key="key" v-if="$route.meta.noCache"></router-view>
+    <app-footer></app-footer>
   </div>
 </template>
 <script>
-import { Navbar, TagsView, AppHeader } from '@/views/layout/components'
+import { Navbar, TagsView, AppHeader, AppFooter } from '@/views/layout/components'
 export default {
   name: 'app',
   components: {
     Navbar,
     TagsView,
-    AppHeader
+    AppHeader,
+    AppFooter
   },
   computed: {
     key() {
@@ -29,7 +31,7 @@ export default {
     }
   },
   created() {
-    console.log('当前版本修改时间 2018-05-19 14:20');
+    // console.log(document.getElementsByTagName('html'))
   }
 }
 
@@ -37,5 +39,9 @@ export default {
 <style lang="scss">
 @import '~normalize.css/normalize.css'; // normalize.css 样式格式化
 @import './styles/index.scss'; // 全局自定义的css样式
+#app {
+  width: 100%;
+  height: 100%;
+}
 
 </style>

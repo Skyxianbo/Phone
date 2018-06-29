@@ -131,6 +131,8 @@ export default {
         }
     },
     mounted() {
+        console.log(window)
+      document.getElementsByTagName('html')[0].style.height = window.scrollHeight + 'px';
         this.view.new = false;
     },
     activated() {

@@ -30,6 +30,7 @@
                 <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
                 </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
+                <el-button type="primary" size="medium" @click="exportData()">导出</el-button>
             </el-form>
         </div>
         <div ref="indexTable">
@@ -61,7 +62,11 @@
                 </el-table-column>
                 <el-table-column label="串码" align="center">
                     <template slot-scope="scope">
-                        {{getNumber(scope.row.numberConf)}}
+                        <div v-if="(scope.row.numberConfString || '').length <= 13">{{scope.row.numberConfString}}</div>
+                        <div v-else>
+                            <span>{{(scope.row.numberConfString || '').substring(0, 13)}}...</span>
+                            <a href="#" style="color: #409EFF" @click="showNumber(scope.row.numberConfString)">查看更多</a>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column label="总价" align="center">
@@ -110,11 +115,15 @@
                 </el-pagination>
             </div>
         </div>
+        <el-dialog title="串码" :visible.sync="ifDialog" width="600px">
+            <p style="wordWrap: break-word">{{dialogNumber}}</p>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { getOrder } from '@/api/order';
 import { formatDate } from '@/utils/data';
+import { goTo } from '@/api/common';
 export default {
     data() {
         return {
@@ -128,7 +137,9 @@ export default {
             number: '',
             isPay: '',
             audit: '',
-            datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())]
+            datetime: [new Date(Date.now() - 86400000 * 30), new Date(Date.now())],
+            ifDialog: false,
+            dialogNumber: '' //全部串码
         }
     },
     created() {
@@ -168,17 +179,32 @@ export default {
             this.pageNum = val;
             this.fetchData();
         },
-        getNumber(numberConf) {
-            var num = [];
-            if (!numberConf) {
-                return '';
-            } else {
-                const arr = JSON.parse(numberConf);
-                arr.forEach((x) => {
-                    num.push(x.number);
-                })
-                return num.join(',');
-            }
+        // getNumber(numberConf) {
+        //     var num = [];
+        //     if (!numberConf) {
+        //         return '';
+        //     } else {
+        //         const arr = JSON.parse(numberConf);
+        //         arr.forEach((x) => {
+        //             num.push(x.number);
+        //         })
+        //         return num.join(',');
+        //     }
+        // },
+        showNumber(number) {
+            this.dialogNumber = number;
+            this.ifDialog = true;
+        },
+        exportData() {
+            goTo('/common/uploadOrder', {
+                keywords: this.keywords,
+                number: this.number,
+                startTime: formatDate(this.datetime[0]) + ' 00:00:00',
+                endTime: formatDate(this.datetime[1]) + ' 23:59:59',
+                isPay: this.isPay,
+                audit: this.audit,
+                type: 1
+            })
         }
     }
 }

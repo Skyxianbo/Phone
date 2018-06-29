@@ -30,6 +30,7 @@
                 <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
                 </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
+                <el-button type="primary" size="medium" @click="exportData()">导出</el-button>
             </el-form>
         </div>
         <div ref="indexTable">
@@ -66,7 +67,11 @@
                 </el-table-column>
                 <el-table-column label="串码" align="center">
                     <template slot-scope="scope">
-                        {{getNumber(scope.row.numberConf)}}
+                        <div v-if="(scope.row.numberConfString || '').length <= 13">{{scope.row.numberConfString}}</div>
+                        <div v-else>
+                            <span>{{(scope.row.numberConfString || '').substring(0, 13)}}...</span>
+                            <a href="#" style="color: #409EFF" @click="showNumber(scope.row.numberConfString)">查看更多</a>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column label="总价" align="center">
@@ -159,6 +164,9 @@
                 <el-button size="medium" type="primary" @click.prevent="sendData">提 交</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="串码" :visible.sync="ifDialog" width="600px">
+            <p style="wordWrap: break-word">{{dialogNumber}}</p>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -166,6 +174,7 @@ import { getOrder, addOrder } from '@/api/order';
 import { openImageBox } from '@/utils/common';
 import SupplierConfig from '../goods/components/supplierConfig';
 import { formatDate } from '@/utils/data';
+import { goTo } from '@/api/common';
 export default {
     components: {
         SupplierConfig
@@ -189,7 +198,9 @@ export default {
             rules: {
                 trackingNumber: [{ required: true, message: "请输入物流单号" }],
                 actualPrices: [{ required: true, message: "请输入实付价格" }]
-            }
+            },
+            ifDialog: false,
+            dialogNumber: '' //全部串码
         }
     },
     created() {
@@ -279,12 +290,20 @@ export default {
                 }
             })
         },
-        getNumber(numberConf) {
-            if (!numberConf) {
-                return '';
-            } else {
-                return JSON.parse(numberConf)[0].number;
-            }
+        showNumber(number) {
+            this.dialogNumber = number;
+            this.ifDialog = true;
+        },
+        exportData() {
+            goTo('/common/uploadOrder', {
+                keywords: this.keywords,
+                number: this.number,
+                startTime: formatDate(this.datetime[0]) + ' 00:00:00',
+                endTime: formatDate(this.datetime[1]) + ' 23:59:59',
+                isPay: this.isPay,
+                audit: this.audit,
+                type: 1
+            })
         }
     }
 }

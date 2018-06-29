@@ -30,6 +30,7 @@
                 <el-date-picker v-model="datetime" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="medium">
                 </el-date-picker>
                 <el-button type="primary" size="medium" @click="fetchData()">查询</el-button>
+                <el-button type="primary" size="medium" @click="exportData()">导出</el-button>
             </el-form>
         </div>
         <div ref="indexTable">
@@ -66,10 +67,10 @@
                 </el-table-column>
                 <el-table-column label="串码" align="center">
                     <template slot-scope="scope">
-                        <div v-if="getNumber(scope.row.numberConf).length <= 13">{{getNumber(scope.row.numberConf)}}</div>
+                        <div v-if="(scope.row.numberConfString || '').length <= 13">{{scope.row.numberConfString}}</div>
                         <div v-else>
-                            <span>{{getNumber(scope.row.numberConf).substring(0, 13)}}...</span>
-                            <a href="#" style="color: #409EFF" @click="showContent(getNumber(scope.row.numberConf))">查看更多</a>
+                            <span>{{(scope.row.numberConfString || '').substring(0, 13)}}...</span>
+                            <a href="#" style="color: #409EFF" @click="showNumber(scope.row.numberConfString)">查看更多</a>
                         </div>
                     </template>
                 </el-table-column>
@@ -144,7 +145,7 @@
             </div>
         </el-dialog>
         <el-dialog title="串码" :visible.sync="ifDialog" width="600px">
-            <p style="wordWrap: break-word">{{content}}</p>
+            <p style="wordWrap: break-word">{{dialogNumber}}</p>
         </el-dialog>
     </div>
 </template>
@@ -152,6 +153,7 @@
 import { getOrder, addOrder } from '@/api/order';
 import { openImageBox } from '@/utils/common';
 import { formatDate } from '@/utils/data';
+import { goTo } from '@/api/common';
 export default {
     data() {
         return {
@@ -172,8 +174,8 @@ export default {
             rules: {
                 cost: [{ required: true, message: "请输入成本" }]
             },
-            content: '',
-            ifDialog: false
+            ifDialog: false,
+            dialogNumber: '' //全部串码
         }
     },
     created() {
@@ -263,16 +265,20 @@ export default {
             }
             return '';
         },
-        getNumber(numberConf) {
-            if (!numberConf) {
-                return '';
-            } else {
-                return JSON.parse(numberConf)[0].number;
-            }
-        },
-        showContent(content) {
-            this.content = content;
+        showNumber(number) {
+            this.dialogNumber = number;
             this.ifDialog = true;
+        },
+        exportData() {
+            goTo('/common/uploadOrder', {
+                keywords: this.keywords,
+                number: this.number,
+                startTime: formatDate(this.datetime[0]) + ' 00:00:00',
+                endTime: formatDate(this.datetime[1]) + ' 23:59:59',
+                isPay: this.isPay,
+                audit: this.audit,
+                type: 2
+            })
         }
     }
 }
